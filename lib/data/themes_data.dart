@@ -113,7 +113,8 @@ Exemple
  a⁰ = 1   "si"  a ≠ 0
  a^(-n) = 1/aⁿ
 ### Remarques
- racine 3ème de a
+
+
  log_a(a^x) = x  "et" a^(log_a x) = x
 
 Exemples :
@@ -254,7 +255,7 @@ La forme générale de l’équation d’une droite est :
 
 Pour une fonction quadratique de la forme;
 
- f(x) = a(x – h)² + k :
+ f(x) = a(x – h)² + k 
 
 -le sommet est (h, k),
 
@@ -436,8 +437,10 @@ sin⁡ 𝜃 = sin(180° − 𝜃)," " cos ⁡𝜃 = cos(-𝜃 )=cos (360° − �
 "Forme :"  y=asin(b(x−c))+d "ou" y=acos(b(x−c))+d.
 "Amplitude :" ∣a∣ =(max⁡ − min )/2⁡
 "Période :" T =\\frac{2π}{|b|}
-Décalage horizontal : c.
+" La période est la distance horizontale entre deux motifs identiques (par exemple, entre deux maxima consécutifs)."
 "Décalage vertical :" d =( max ⁡+ min)/2⁡
+### "Décalage horizontal c (phase)'
+"Utiliser un  point connu (maxima, minima, passages par zéro) et de remplacer ses coordonnées  dans l'équation de la fonction puis résoudre c."
 ''',
   ),
 
@@ -546,7 +549,7 @@ L’étude des probabilités nous aide à comprendre le degré d’incertitude q
 L’ensemble de tous les résultats possibles d’une expérience est appelé l’univers de cette expérience. Il est noté  U.
 -La notation n(U) désigne le nombre d’éléments de l’univers.
 La probabilité d’un événement A est donnée par :
-P(A)= (n(U))/(n(A))
+P(A)= (n(A))/(n(U))
 -où n(A) est le nombre de cas favorables à A et n(U) le nombre total de cas possibles.
 -Si la probabilité d’un événement est P, alors sur n répétitions, on s’attend à ce que l’événement se produise environ n×P fois.
 ### Remarque
@@ -693,12 +696,11 @@ ou bien:
 - L’accélération a(t) est la dérivée de la vitesse :
 a(t)=dv/dt=(d^2 s)/dt^2 "ou bien" a(t)=v'(t)=s^(")(t)
 
--Si v et a ont le même signe, le mouvement est un accélération (accélération positive).
+-Si v et a ont le même signe, le mouvement est une accélération (accélération positive).
 
 -Si v et a ont des signes différents, le mouvement est une décélération.
 ## Primitives et intégrale indéfinie
- ### Règle de la puissance :
-
+### Règle de la puissance :
 ∫𝑥^𝑛 𝑑𝑥 = 1/(𝑛+1)x^(n+1) +C  " " 𝑛 ≠-1
 ### Règle de la constante :
 ∫kdx=kx+C

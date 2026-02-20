@@ -176,10 +176,23 @@ class BookletScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Booklet de Formules"),
-        backgroundColor: const Color(0xFF6C5CE7),
-        foregroundColor: Colors.white,
-      ),
+    backgroundColor: const Color(0xFF6C5CE7),
+    foregroundColor: Colors.white,
+    title: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: const [
+        Text(
+          "Booklet de Formules",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          "2021",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ],
+    ),
+     centerTitle: true,
+  ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: formulasByTheme.length,

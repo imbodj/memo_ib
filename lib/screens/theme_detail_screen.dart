@@ -104,6 +104,7 @@ supMap.forEach((k, v) => s = s.replaceAll(k, v));
 s = s.replaceAllMapped(RegExp(r'([A-Za-z0-9\)])\^(\(([^)]+)\))'), (m) {
   return '${m[1]}^{${m[3]}}';
 });
+// 6') Conversion spéciale : a^(m/n) → a^{\frac{m}{n}}
 
 // Puis traitement normal pour les autres exposants
 s = s.replaceAllMapped(RegExp(r'([A-Za-z0-9\)])(\^)([A-Za-z0-9\-\+]+)(?![{\(])'), (m) {

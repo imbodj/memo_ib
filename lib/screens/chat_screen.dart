@@ -1,9 +1,20 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+<<<<<<< HEAD
 import 'message.dart';
 import 'solver.dart';
+=======
+import '../enums/conversation_state.dart';
+import '../models/learning_data.dart';
+import '../models/exercise.dart';
+import '../models/message.dart';
+import '../widgets/typing_indicator.dart';
+import '../widgets/message_bubble.dart';
+>>>>>>> 9195555 (Ajout des nouveaux models et widgets)
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -13,15 +24,25 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
-  // Controllers et variables d'état
   final TextEditingController _messageController = TextEditingController();
   final List<Message> _messages = [];
   final ScrollController _scrollController = ScrollController();
+<<<<<<< HEAD
   final MathSolverService _mathSolver = MathSolverService();
 
   bool _isTyping = false;
 
+=======
+
+  bool _isTyping = false;
+>>>>>>> 9195555 (Ajout des nouveaux models et widgets)
   late AnimationController _typingAnimationController;
+
+  ConversationState _currentState = ConversationState.selectTheme;
+  String? _selectedTheme;
+  String? _selectedLesson;
+  int _currentExerciseIndex = 0;
+  bool _showingSolution = false;
 
   @override
   void initState() {
@@ -38,34 +59,29 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // INITIALISATION
-  // ═══════════════════════════════════════════════════════════════════════════
-
   void _initializeAnimations() {
     _typingAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     )..repeat();
   }
 
   Future<void> _initMessages() async {
     await _loadMessages();
-
     if (_messages.isEmpty) {
       _addMessage(Message(
+<<<<<<< HEAD
         text:
             "Bonjour ! Je suis votre assistant mathématiques pour le programme IB AA. Posez-moi vos questions !",
+=======
+        text: "Bonjour ! Je suis votre assistant mathématiques pour le programme IB maths AA.\n\n**Choisissez un thème :**\n\n• Thème 1: Nombres et Algèbre \n• Thème 2: Fonctions\n• Thème 3: Géométrie et Trigonométrie \n• Thème 4: Statistiques et Probabilités\n• Thème 5: Analyse mathématique\n\n Tapez simplement le numéro du thème (1, 2, 3, 4, ou 5).",
+>>>>>>> 9195555 (Ajout des nouveaux models et widgets)
         isUser: false,
         timestamp: DateTime.now(),
         id: DateTime.now().millisecondsSinceEpoch.toString(),
       ));
     }
   }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // GESTION DES MESSAGES
-  // ═══════════════════════════════════════════════════════════════════════════
 
   Future<void> _loadMessages() async {
     final prefs = await SharedPreferences.getInstance();
@@ -106,40 +122,179 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 100),
           curve: Curves.easeOut,
         );
       }
     });
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // ENVOI ET TRAITEMENT DES MESSAGES
-  // ═══════════════════════════════════════════════════════════════════════════
+  String _processUserInput(String userInput) {
+    String input = userInput.toLowerCase().trim();
+
+    switch (_currentState) {
+      case ConversationState.selectTheme:
+        return _handleThemeSelection(input);
+      case ConversationState.selectLesson:
+        return _handleLessonSelection(input);
+      case ConversationState.inExercise:
+        return _handleExerciseInteraction(input);
+      default:
+        return "Je n'ai pas compris votre demande.";
+    }
+  }
+
+  String _handleThemeSelection(String input) {
+    Map<String, String> themeMap = {
+      '1': 'Thème 1: Nombres et Algèbre',
+      'theme 1': 'Thème 1: Nombres et Algèbre',
+      'thème 1': 'Thème 1: Nombres et Algèbre',
+      '2': 'Thème 2: Fonctions',
+      'theme 2': 'Thème 2: Fonctions',
+      'thème 2': 'Thème 2: Fonctions',
+      '3': 'Thème 3: Géométrie et Trigonométrie',
+      'theme 3': 'Thème 3: Géométrie et Trigonométrie',
+      'thème 3': 'Thème 3: Géométrie et Trigonométrie',
+      '4': 'Thème 4: Statistiques et Probabilités',
+      'theme 4': 'Thème 4: Statistiques et Probabilités',
+      'thème 4': 'Thème 4: Statistiques et Probabilités',
+      '5': 'Thème 5: Analyse mathématique',
+      'theme 5': 'Thème 5: Analyse mathématique',
+      'thème 5': 'Thème 5: Analyse mathématique',
+    };
+    String? selectedTheme = themeMap[input.toLowerCase()];
+
+    if (selectedTheme != null && LearningData.themes.containsKey(selectedTheme)) {
+      _selectedTheme = selectedTheme;
+      _currentState = ConversationState.selectLesson;
+      var lessons = LearningData.themes[selectedTheme]!.keys.toList();
+      String lessonsList = lessons.asMap().entries.map((entry) =>
+        "• ${entry.key + 1}. ${entry.value}").join('\n');
+      return "Excellent choix ! Vous avez sélectionné : **$selectedTheme**\n\n**Choisissez une leçon :**\n\n$lessonsList\n\nTapez le numéro de la leçon que vous souhaitez travailler.";
+    }
+
+    return "Je n'ai pas reconnu votre choix. Veuillez taper le numéro du thème (1, 2, 3, 4, ou 5) ou le nom du thème.";
+  }
+
+  String _handleLessonSelection(String input) {
+    if (_selectedTheme == null) {
+      _currentState = ConversationState.selectTheme;
+      return "Une erreur s'est produite. Recommençons par choisir un thème.";
+    }
+    var lessons = LearningData.themes[_selectedTheme!]!.keys.toList();
+
+    int? lessonIndex;
+    try {
+      lessonIndex = int.parse(input) - 1;
+    } catch (e) {
+      for (int i = 0; i < lessons.length; i++) {
+        if (lessons[i].toLowerCase().contains(input)) {
+          lessonIndex = i;
+          break;
+        }
+      }
+    }
+
+    if (lessonIndex != null && lessonIndex >= 0 && lessonIndex < lessons.length) {
+      _selectedLesson = lessons[lessonIndex];
+      _currentState = ConversationState.inExercise;
+      _currentExerciseIndex = 0;
+      _showingSolution = false;
+
+      var exercises = LearningData.themes[_selectedTheme!]![_selectedLesson!]!;
+      var totalExercises = exercises.length;
+      var exercise = exercises[0];
+
+      return "Parfait ! Commençons avec : **$_selectedLesson**\n\n**Exercice 1/$totalExercises:**\n\n${exercise.question}\n\n💡 Tapez 'correction' pour voir la solution, ou donnez votre réponse !";
+    }
+
+    return "Numéro de leçon invalide. Veuillez choisir un numéro entre 1 et ${lessons.length}.";
+  }
+
+  String _handleExerciseInteraction(String input) {
+    if (_selectedTheme == null || _selectedLesson == null) {
+      _currentState = ConversationState.selectTheme;
+      return "Une erreur s'est produite. Recommençons.";
+    }
+
+    var exercises = LearningData.themes[_selectedTheme!]![_selectedLesson!]!;
+    var totalExercices = exercises.length;
+
+    if (input.contains('correction') || input.contains('solution')) {
+      if (!_showingSolution) {
+        _showingSolution = true;
+        var currentExercise = exercises[_currentExerciseIndex];
+        return "**Solution de l'exercice ${_currentExerciseIndex + 1}:**\n\n${currentExercise.solution}\n\n📚 Tapez 'suivant' pour l'exercice suivant, 'menu' pour revenir au menu principal, ou 'leçons' pour changer de leçon.";
+      } else {
+        return "La solution est déjà affichée ci-dessus ! Tapez 'suivant' pour continuer.";
+      }
+    }
+
+    if (input.contains('suivant') || input.contains('next')) {
+      if (_currentExerciseIndex < exercises.length - 1) {
+        _currentExerciseIndex++;
+        _showingSolution = false;
+        var exercise = exercises[_currentExerciseIndex];
+        return "**Exercice ${_currentExerciseIndex + 1}/$totalExercices:**\n\n${exercise.question}\n\n💡 Tapez 'correction' pour voir la solution !";
+      } else {
+        return "🎉 Félicitations ! Vous avez terminé tous les exercices de cette leçon.\n\n**Options :**\n• Tapez 'recommencer' pour refaire cette leçon\n• Tapez 'leçons' pour choisir une autre leçon\n• Tapez 'menu' pour revenir au menu principal";
+      }
+    }
+
+    if (input.contains('recommencer') || input.contains('restart')) {
+      _currentExerciseIndex = 0;
+      _showingSolution = false;
+      var exercise = exercises[0];
+      return "**Recommençons la leçon : $_selectedLesson**\n\n**Exercice 1/$totalExercices:**\n\n${exercise.question}\n\n💡 Tapez 'correction' pour voir la solution !";
+    }
+
+    if (input.contains('leçons') || input.contains('lessons')) {
+      _currentState = ConversationState.selectLesson;
+      _selectedLesson = null;
+
+      var lessons = LearningData.themes[_selectedTheme!]!.keys.toList();
+      String lessonsList = lessons.asMap().entries.map((entry) =>
+        "• ${entry.key + 1}. ${entry.value}").join('\n');
+
+      return "**Choisissez une nouvelle leçon du $_selectedTheme :**\n\n$lessonsList\n\nTapez le numéro de la leçon.";
+    }
+
+    if (input.contains('menu') || input.contains('thèmes') || input.contains('themes')) {
+      _currentState = ConversationState.selectTheme;
+      _selectedTheme = null;
+      _selectedLesson = null;
+
+      return "**Retour au menu principal. Choisissez un thème :**\n\n• Thème 1: Nombres et Algèbre\n• Thème 2: Fonctions \n• Thème 3: Géométrie et Trigonométrie \n• Thème 4: Statistiques et Probabilités\n• Thème 5: Analyse mathématique\n\n Tapez le numéro du thème.";
+    }
+
+    if (!_showingSolution) {
+      return "Merci pour votre réponse ! 📝\n\nTapez 'correction' pour voir la solution détaillée et comparer avec votre approche.";
+    }
+
+    return "Commandes disponibles :\n• 'correction' - Voir la solution\n• 'suivant' - Exercice suivant\n• 'leçons' - Changer de leçon\n• 'menu' - Retour au menu principal";
+  }
 
   Future<void> _sendMessage() async {
     if (_messageController.text.trim().isEmpty) return;
-
     final userMessage = Message(
       text: _messageController.text.trim(),
       isUser: true,
       timestamp: DateTime.now(),
       id: DateTime.now().millisecondsSinceEpoch.toString(),
     );
-
     _addMessage(userMessage);
+    String userInput = _messageController.text.trim();
     _messageController.clear();
-
     setState(() {
       _isTyping = true;
     });
-
-    await Future.delayed(const Duration(milliseconds: 1500));
-
+    await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
       _isTyping = false;
     });
+    String response = _processUserInput(userInput);
 
+<<<<<<< HEAD
     // Tentative de résolution avec le solver
     final solution = _mathSolver.solve(userMessage.text);
 
@@ -154,6 +309,8 @@ $steps
       // Ici, ça tombera bien dans _generateMathResponse si rien n’est reconnu
       response = _generateMathResponse(userMessage.text);
     }
+=======
+>>>>>>> 9195555 (Ajout des nouveaux models et widgets)
     _addMessage(Message(
       text: response,
       isUser: false,
@@ -162,6 +319,7 @@ $steps
     ));
   }
 
+<<<<<<< HEAD
   // ═══════════════════════════════════════════════════════════════════════════
   // GÉNÉRATION DES RÉPONSES MATHÉMATIQUES
   // ═══════════════════════════════════════════════════════════════════════════
@@ -356,6 +514,8 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
   // DIALOGUES ET INTERACTIONS
   // ═══════════════════════════════════════════════════════════════════════════
 
+=======
+>>>>>>> 9195555 (Ajout des nouveaux models et widgets)
   void _showDeleteDialog(Message message) {
     showDialog(
       context: context,
@@ -383,6 +543,7 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
     );
   }
 
+<<<<<<< HEAD
   // ═══════════════════════════════════════════════════════════════════════════
   // WIDGETS DE L'INTERFACE
   // ═══════════════════════════════════════════════════════════════════════════
@@ -757,6 +918,8 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
     );
   }
 
+=======
+>>>>>>> 9195555 (Ajout des nouveaux models et widgets)
   Widget _buildInputSection(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -784,8 +947,9 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
               ),
               child: TextField(
                 controller: _messageController,
+                style: const TextStyle(fontSize: 17),
                 decoration: const InputDecoration(
-                  hintText: 'Posez votre question mathématique...',
+                  hintText: 'Tapez votre réponse ou une commande...',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 20,
@@ -810,6 +974,7 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
               icon: const Icon(
                 Icons.send,
                 color: Colors.white,
+                size: 25,
               ),
             ),
           ),
@@ -817,4 +982,89 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
       ),
     );
   }
+<<<<<<< HEAD
+=======
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Assistant Mathématiques',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        foregroundColor: isDark ? Colors.white : Colors.black,
+        elevation: 1,
+        shadowColor: Colors.black.withOpacity(0.1),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Effacer l\'historique'),
+                  content: const Text('Voulez-vous supprimer tout l\'historique des conversations ?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Annuler'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        setState(() {
+                          _messages.clear();
+                          _currentState = ConversationState.selectTheme;
+                          _selectedTheme = null;
+                          _selectedLesson = null;
+                          _currentExerciseIndex = 0;
+                          _showingSolution = false;
+                        });
+                        await _saveMessages();
+                        _addMessage(Message(
+                          text: "Bonjour ! Je suis votre assistant mathématiques pour le programme IB AA.\n\n**Choisissez un thème :**\n\n• Thème 1: Nombres et Algèbre\n• Thème 2: Fonctions\n• Thème 3: Géométrie et Trigonométrie\n• Thème 4: Statistiques et Probabilités\n• Thème 5: Analyse mathématique\n\nTapez simplement le numéro du thème (1, 2, 3, 4, ou 5).",
+                          isUser: false,
+                          timestamp: DateTime.now(),
+                          id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        ));
+                      },
+                      style: TextButton.styleFrom(foregroundColor: Colors.red),
+                      child: const Text('Effacer'),
+                    ),
+                  ],
+                ),
+              );
+            },
+            icon: const Icon(Icons.delete_outline),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              itemCount: _messages.length + (_isTyping ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == _messages.length && _isTyping) {
+                  return TypingIndicator(typingAnimationController: _typingAnimationController);
+                }
+                return MessageBubble(
+                  message: _messages[index],
+                  index: index,
+                  onLongPress: _showDeleteDialog,
+                );
+              },
+            ),
+          ),
+          _buildInputSection(isDark),
+        ],
+      ),
+    );
+  }
+>>>>>>> 9195555 (Ajout des nouveaux models et widgets)
 }
