@@ -5,7 +5,6 @@ import '../data/themes_data.dart';
 import 'chat_screen.dart';
 import 'theme_detail_screen.dart';
 import 'booklet_screen.dart';
-import '../data/themes_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,13 +13,12 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> 
-    with TickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
- final themes = mathThemes;
+
+  final themes = mathThemes;
 
   @override
   void initState() {
@@ -29,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -37,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-    
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
@@ -45,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen>
       parent: _animationController,
       curve: Curves.easeOutBack,
     ));
-    
+
     _animationController.forward();
   }
 
@@ -112,9 +110,9 @@ class _HomeScreenState extends State<HomeScreen>
                       size: 40,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Titre
                   Text(
                     'À propos',
@@ -124,12 +122,13 @@ class _HomeScreenState extends State<HomeScreen>
                       color: isDark ? Colors.white : const Color(0xFF2D3436),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Version
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: const Color(0xFF6C5CE7).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -146,9 +145,9 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Description
                   Text(
                     'Cette application est actuellement conçue pour Mathématiques AA SL et sera élargie pour les autres niveaux et options du programme IB.',
@@ -159,15 +158,15 @@ class _HomeScreenState extends State<HomeScreen>
                       height: 1.5,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Développeur
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isDark 
+                      color: isDark
                           ? Colors.white.withOpacity(0.05)
                           : const Color(0xFF6C5CE7).withOpacity(0.05),
                       borderRadius: BorderRadius.circular(16),
@@ -187,7 +186,9 @@ class _HomeScreenState extends State<HomeScreen>
                           'Développé par',
                           style: TextStyle(
                             fontSize: 14,
-                            color: isDark ? Colors.white60 : const Color(0xFF636E72),
+                            color: isDark
+                                ? Colors.white60
+                                : const Color(0xFF636E72),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -202,9 +203,9 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Bouton Fermer
                   SizedBox(
                     width: double.infinity,
@@ -242,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -292,8 +293,8 @@ class _HomeScreenState extends State<HomeScreen>
                                 'Mathématiques AA',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: isDark 
-                                      ? Colors.white70 
+                                  color: isDark
+                                      ? Colors.white70
                                       : Colors.white.withOpacity(0.8),
                                   fontWeight: FontWeight.w300,
                                 ),
@@ -303,7 +304,8 @@ class _HomeScreenState extends State<HomeScreen>
                           Row(
                             children: [
                               IconButton(
-                                onPressed: () => _showAboutDialog(context, isDark),
+                                onPressed: () =>
+                                    _showAboutDialog(context, isDark),
                                 icon: const Icon(
                                   Icons.info_outline,
                                   color: Colors.white,
@@ -326,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen>
                   );
                 },
               ),
-              
+
               // Bouton Chat
               SlideTransition(
                 position: _slideAnimation,
@@ -368,9 +370,9 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 30),
-              
+
               // Liste des thèmes avec scroll horizontal
               Expanded(
                 child: SlideTransition(
@@ -399,8 +401,10 @@ class _HomeScreenState extends State<HomeScreen>
                             itemBuilder: (context, index) {
                               final theme = themes[index];
                               return AnimatedContainer(
-                                duration: Duration(milliseconds: 300 + (index * 100)),
-                                margin: const EdgeInsets.symmetric(horizontal: 10),
+                                duration:
+                                    Duration(milliseconds: 300 + (index * 100)),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 10),
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -427,7 +431,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     child: Padding(
                                       padding: const EdgeInsets.all(24.0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Container(
                                             width: 60,
@@ -435,11 +440,14 @@ class _HomeScreenState extends State<HomeScreen>
                                             decoration: BoxDecoration(
                                               gradient: LinearGradient(
                                                 colors: [
-                                                  Color(0xFF6C5CE7).withOpacity(0.8),
-                                                  Color(0xFF74B9FF).withOpacity(0.8),
+                                                  Color(0xFF6C5CE7)
+                                                      .withOpacity(0.8),
+                                                  Color(0xFF74B9FF)
+                                                      .withOpacity(0.8),
                                                 ],
                                               ),
-                                              borderRadius: BorderRadius.circular(16),
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
                                             ),
                                             child: Center(
                                               child: Text(
@@ -461,23 +469,30 @@ class _HomeScreenState extends State<HomeScreen>
                                               color: Color(0xFF2D3436),
                                             ),
                                           ),
-                                        
                                           const SizedBox(height: 20),
                                           Expanded(
                                             child: Wrap(
                                               spacing: 8,
                                               runSpacing: 8,
-                                              children: theme.topics.map((topic) {
+                                              children:
+                                                  theme.topics.map((topic) {
                                                 return Container(
-                                                  padding: const EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                     horizontal: 12,
                                                     vertical: 6,
                                                   ),
                                                   decoration: BoxDecoration(
-                                                    color: const Color(0xFF6C5CE7).withOpacity(0.1),
-                                                    borderRadius: BorderRadius.circular(12),
+                                                    color:
+                                                        const Color(0xFF6C5CE7)
+                                                            .withOpacity(0.1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
                                                     border: Border.all(
-                                                      color: const Color(0xFF6C5CE7).withOpacity(0.3),
+                                                      color: const Color(
+                                                              0xFF6C5CE7)
+                                                          .withOpacity(0.3),
                                                     ),
                                                   ),
                                                   child: Text(
@@ -485,7 +500,8 @@ class _HomeScreenState extends State<HomeScreen>
                                                     style: const TextStyle(
                                                       fontSize: 12,
                                                       color: Color(0xFF6C5CE7),
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
                                                 );
@@ -495,7 +511,8 @@ class _HomeScreenState extends State<HomeScreen>
                                           const SizedBox(height: 20),
                                           Container(
                                             width: double.infinity,
-                                            padding: const EdgeInsets.symmetric(vertical: 12),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12),
                                             decoration: BoxDecoration(
                                               gradient: const LinearGradient(
                                                 colors: [
@@ -503,7 +520,8 @@ class _HomeScreenState extends State<HomeScreen>
                                                   Color(0xFF74B9FF),
                                                 ],
                                               ),
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             child: const Text(
                                               'Voir le Résumé',
@@ -529,7 +547,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 ),
               ),
-              
+
               // Bouton Booklet
               SlideTransition(
                 position: _slideAnimation,

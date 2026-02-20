@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/math_theme_data.dart';
-import "../screens/theme_detail_screen.dart";
-
 
 final List<MathThemeData> mathThemes = [
   // Thème 1 - Nombres et algèbre
@@ -122,8 +120,8 @@ Exemples :
 - 2³ × 2² = 2⁵ = 32
 - x⁴ ÷ x² = x² 
 - (3²)³ = 3⁶ = 729
- ''', 
-),
+ ''',
+  ),
 
   // Thème 2 - Fonctions
   MathThemeData(
@@ -384,7 +382,7 @@ y= ax+b/ cx+d
       'Distance, milieu,aire , volume dans l\'espace',
       'Géométrie du triangle, Lois des sinus et des cosinus. Cercle et équations trigonométriques',
       'Fonctions trigonométriques'
-      ],
+    ],
     description: '''# Géométrie et trigonométrie
 ## Géométrie dans l’espace (3D)
 

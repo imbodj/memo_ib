@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'dart:math';
-import '../models/math_theme_data.dart';
 import 'message.dart';
 import 'solver.dart';
 
@@ -20,9 +18,9 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   final List<Message> _messages = [];
   final ScrollController _scrollController = ScrollController();
   final MathSolverService _mathSolver = MathSolverService();
-  
+
   bool _isTyping = false;
-  
+
   late AnimationController _typingAnimationController;
 
   @override
@@ -56,7 +54,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     if (_messages.isEmpty) {
       _addMessage(Message(
-        text: "Bonjour ! Je suis votre assistant mathématiques pour le programme IB AA. Posez-moi vos questions !",
+        text:
+            "Bonjour ! Je suis votre assistant mathématiques pour le programme IB AA. Posez-moi vos questions !",
         isUser: false,
         timestamp: DateTime.now(),
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -71,7 +70,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   Future<void> _loadMessages() async {
     final prefs = await SharedPreferences.getInstance();
     final messagesJson = prefs.getStringList('chat_messages') ?? [];
-    
+
     setState(() {
       _messages.clear();
       _messages.addAll(
@@ -82,7 +81,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   Future<void> _saveMessages() async {
     final prefs = await SharedPreferences.getInstance();
-    final messagesJson = _messages.map((msg) => jsonEncode(msg.toJson())).toList();
+    final messagesJson =
+        _messages.map((msg) => jsonEncode(msg.toJson())).toList();
     await prefs.setStringList('chat_messages', messagesJson);
   }
 
@@ -143,18 +143,18 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     // Tentative de résolution avec le solver
     final solution = _mathSolver.solve(userMessage.text);
 
-String response;
-if (solution['type'] != 'error' && solution['result'] != null) {
-  final steps = (solution['steps'] as List<String>).join('\n');
-  response = """**Résolution étape par étape :**  
+    String response;
+    if (solution['type'] != 'error' && solution['result'] != null) {
+      final steps = (solution['steps'] as List<String>).join('\n');
+      response = """**Résolution étape par étape :**  
 $steps  
 
 **Résultat :** ${solution['result']}""";
-} else {
-  // Ici, ça tombera bien dans _generateMathResponse si rien n’est reconnu
-  response = _generateMathResponse(userMessage.text);
-}
- _addMessage(Message(
+    } else {
+      // Ici, ça tombera bien dans _generateMathResponse si rien n’est reconnu
+      response = _generateMathResponse(userMessage.text);
+    }
+    _addMessage(Message(
       text: response,
       isUser: false,
       timestamp: DateTime.now(),
@@ -168,9 +168,9 @@ $steps
 
   String _generateMathResponse(String question) {
     final lowerQuestion = question.toLowerCase();
-    
+
     // Équations du premier degré
-    if (lowerQuestion.contains('équation') && 
+    if (lowerQuestion.contains('équation') &&
         (lowerQuestion.contains('premier') || lowerQuestion.contains('ax+b'))) {
       return '''**Équations du premier degré : ax + b = 0**
 
@@ -184,9 +184,9 @@ $steps
 
 **Méthode :** Isoler x en déplaçant les termes.''';
     }
-    
+
     // Équations du second degré
-    if (lowerQuestion.contains('équation') && 
+    if (lowerQuestion.contains('équation') &&
         (lowerQuestion.contains('second') || lowerQuestion.contains('ax²'))) {
       return '''**Équations du second degré : ax² + bx + c = 0**
 
@@ -201,7 +201,7 @@ $steps
 - Δ = 25 - 24 = 1
 - x = (5 ± 1)/2 = 3 ou 2''';
     }
-    
+
     // Développement du binôme
     if (lowerQuestion.contains('binôme') || lowerQuestion.contains('(a+b)')) {
       return '''**Développement du binôme (a+b)ⁿ**
@@ -216,9 +216,10 @@ $steps
 - (a+b)² = a² + 2ab + b²
 - (a+b)³ = a³ + 3a²b + 3ab² + b³''';
     }
-    
+
     // Lois des exposants
-    if (lowerQuestion.contains('exposant') || lowerQuestion.contains('puissance')) {
+    if (lowerQuestion.contains('exposant') ||
+        lowerQuestion.contains('puissance')) {
       return '''**Lois des exposants**
 
 **Règles principales :**
@@ -234,7 +235,7 @@ $steps
 - x⁴ ÷ x² = x² 
 - (3²)³ = 3⁶ = 729''';
     }
-    
+
     // Logarithmes
     if (lowerQuestion.contains('logarithme') || lowerQuestion.contains('log')) {
       return '''**Logarithmes**
@@ -252,9 +253,10 @@ $steps
 
 **Logarithme naturel :** ln(x) = log_e(x)''';
     }
-    
+
     // Dérivées
-    if (lowerQuestion.contains('dérivée') || lowerQuestion.contains('derivative')) {
+    if (lowerQuestion.contains('dérivée') ||
+        lowerQuestion.contains('derivative')) {
       return '''**Dérivées - Règles de base**
 
 **Fonctions de base :**
@@ -270,10 +272,10 @@ $steps
 - (cf)' = cf'
 - (fg)' = f'g + fg' (règle du produit)''';
     }
-    
+
     // Trigonométrie
-    if (lowerQuestion.contains('trigonométrie') || 
-        lowerQuestion.contains('sin') || 
+    if (lowerQuestion.contains('trigonométrie') ||
+        lowerQuestion.contains('sin') ||
         lowerQuestion.contains('cos')) {
       return '''**Trigonométrie - Identités fondamentales**
 
@@ -287,9 +289,10 @@ $steps
 
 **Valeurs particulières :** sin 30° = 1/2, cos 30° = √3/2''';
     }
-    
+
     // Probabilités
-    if (lowerQuestion.contains('probabilité') || lowerQuestion.contains('statistique')) {
+    if (lowerQuestion.contains('probabilité') ||
+        lowerQuestion.contains('statistique')) {
       return '''**Probabilités de base**
 
 **Probabilité :** P(A) = nombre de cas favorables / nombre de cas totaux
@@ -303,8 +306,9 @@ $steps
     }
 
     // Primitives
-if (lowerQuestion.contains('primitive') || lowerQuestion.contains('intégrale')) {
-  return '''**Primitives - Règles de base**
+    if (lowerQuestion.contains('primitive') ||
+        lowerQuestion.contains('intégrale')) {
+      return '''**Primitives - Règles de base**
 
 **Fonctions usuelles :**
 - ∫ c dx = cx + C
@@ -318,11 +322,11 @@ if (lowerQuestion.contains('primitive') || lowerQuestion.contains('intégrale'))
 ∫ (x² + 1) dx  
 = x³/3 + x + C
 ''';
-}
+    }
 
 // Terme général du binôme
-if (lowerQuestion.contains('terme') && lowerQuestion.contains('binôme')) {
-  return '''**Terme général du développement du binôme**
+    if (lowerQuestion.contains('terme') && lowerQuestion.contains('binôme')) {
+      return '''**Terme général du développement du binôme**
 
 Soit (a+b)ⁿ.  
 Le terme de rang k+1 (k = 0, 1, ..., n) est :
@@ -333,9 +337,8 @@ Tₖ₊₁ = C(n,k) × aⁿ⁻ᵏ × bᵏ
 Dans (x+2)⁵, le terme en k=2 est :  
 T₃ = C(5,2) × x³ × 2² = 10 × x³ × 4 = 40x³
 ''';
-}
+    }
 
-    
     // Réponse par défaut
     return '''Je me concentre sur les mathématiques du programme IB AA. Je peux vous aider avec :
 
@@ -359,7 +362,8 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Supprimer le message'),
-          content: const Text('Êtes-vous sûr de vouloir supprimer ce message ?'),
+          content:
+              const Text('Êtes-vous sûr de vouloir supprimer ce message ?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -424,7 +428,7 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
   Widget _buildDot(int index) {
     final animationValue = _typingAnimationController.value;
     final dotAnimation = ((animationValue * 3) - index).clamp(0.0, 1.0);
-    
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       width: 6,
@@ -443,7 +447,7 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
   Widget _buildMessageBubble(Message message, int index) {
     final isUser = message.isUser;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 300 + (index * 100)),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -455,14 +459,16 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
               child: Row(
-                mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                mainAxisAlignment:
+                    isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   if (!isUser) ...[
                     const CircleAvatar(
                       radius: 16,
                       backgroundColor: Color(0xFF6C5CE7),
-                      child: Icon(Icons.smart_toy, color: Colors.white, size: 16),
+                      child:
+                          Icon(Icons.smart_toy, color: Colors.white, size: 16),
                     ),
                     const SizedBox(width: 8),
                   ],
@@ -473,17 +479,21 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
                         constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.75,
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
                           gradient: isUser
                               ? const LinearGradient(
-                                  colors: [Color(0xFF6C5CE7), Color(0xFF74B9FF)],
+                                  colors: [
+                                    Color(0xFF6C5CE7),
+                                    Color(0xFF74B9FF)
+                                  ],
                                 )
                               : null,
-                          color: isUser 
-                              ? null 
-                              : isDark 
-                                  ? const Color(0xFF2D2D2D) 
+                          color: isUser
+                              ? null
+                              : isDark
+                                  ? const Color(0xFF2D2D2D)
                                   : const Color(0xFFF0F0F0),
                           borderRadius: BorderRadius.only(
                             topLeft: const Radius.circular(18),
@@ -508,7 +518,7 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
                               "${message.timestamp.hour.toString().padLeft(2, '0')}:${message.timestamp.minute.toString().padLeft(2, '0')}",
                               style: TextStyle(
                                 fontSize: 10,
-                                color: isUser 
+                                color: isUser
                                     ? Colors.white.withOpacity(0.7)
                                     : Colors.grey[600],
                               ),
@@ -523,7 +533,8 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
                     CircleAvatar(
                       radius: 16,
                       backgroundColor: Colors.grey[300],
-                      child: const Icon(Icons.person, color: Colors.grey, size: 16),
+                      child: const Icon(Icons.person,
+                          color: Colors.grey, size: 16),
                     ),
                   ],
                 ],
@@ -536,10 +547,15 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
   }
 
   Widget _buildMessageContent(String text, bool isUser, bool isDark) {
-    if (text.contains('∫') || text.contains('Σ') || text.contains('²') || 
-        text.contains('³') || text.contains('√') || text.contains('dx') ||
-        text.contains('sin') || text.contains('cos') || text.contains('tan')) {
-      
+    if (text.contains('∫') ||
+        text.contains('Σ') ||
+        text.contains('²') ||
+        text.contains('³') ||
+        text.contains('√') ||
+        text.contains('dx') ||
+        text.contains('sin') ||
+        text.contains('cos') ||
+        text.contains('tan')) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: _parseTextWithMath(text, isUser, isDark),
@@ -549,10 +565,10 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
         text,
         style: TextStyle(
           fontSize: 16,
-          color: isUser 
-              ? Colors.white 
-              : isDark 
-                  ? Colors.white 
+          color: isUser
+              ? Colors.white
+              : isDark
+                  ? Colors.white
                   : Colors.black87,
           height: 1.4,
         ),
@@ -563,13 +579,13 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
   List<Widget> _parseTextWithMath(String text, bool isUser, bool isDark) {
     List<Widget> widgets = [];
     List<String> lines = text.split('\n');
-    
+
     for (String line in lines) {
       if (line.trim().isEmpty) {
         widgets.add(const SizedBox(height: 8));
         continue;
       }
-      
+
       if (line.startsWith('**') && line.endsWith('**')) {
         widgets.add(
           Padding(
@@ -579,31 +595,35 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: isUser 
-                    ? Colors.white 
-                    : isDark 
-                        ? Colors.white 
+                color: isUser
+                    ? Colors.white
+                    : isDark
+                        ? Colors.white
                         : Colors.black87,
               ),
             ),
           ),
         );
-      } else if (line.contains('∫') || line.contains('²') || line.contains('³') || 
-                 line.contains('√') || line.contains('dx') || line.contains('Σ')) {
+      } else if (line.contains('∫') ||
+          line.contains('²') ||
+          line.contains('³') ||
+          line.contains('√') ||
+          line.contains('dx') ||
+          line.contains('Σ')) {
         try {
           widgets.add(
             Container(
               margin: const EdgeInsets.symmetric(vertical: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isUser 
+                color: isUser
                     ? Colors.white.withOpacity(0.2)
                     : isDark
                         ? Colors.grey[800]
                         : Colors.white,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: isUser 
+                  color: isUser
                       ? Colors.white.withOpacity(0.3)
                       : Colors.grey.withOpacity(0.3),
                 ),
@@ -615,10 +635,10 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
                   line,
                   textStyle: TextStyle(
                     fontSize: 16,
-                    color: isUser 
-                        ? Colors.white 
-                        : isDark 
-                            ? Colors.white 
+                    color: isUser
+                        ? Colors.white
+                        : isDark
+                            ? Colors.white
                             : Colors.black87,
                   ),
                 ),
@@ -634,10 +654,10 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: 'monospace',
-                  color: isUser 
-                      ? Colors.white 
-                      : isDark 
-                          ? Colors.white 
+                  color: isUser
+                      ? Colors.white
+                      : isDark
+                          ? Colors.white
                           : Colors.black87,
                 ),
               ),
@@ -650,10 +670,10 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
             line,
             style: TextStyle(
               fontSize: 16,
-              color: isUser 
-                  ? Colors.white 
-                  : isDark 
-                      ? Colors.white 
+              color: isUser
+                  ? Colors.white
+                  : isDark
+                      ? Colors.white
                       : Colors.black87,
               height: 1.4,
             ),
@@ -661,7 +681,7 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
         );
       }
     }
-    
+
     return widgets;
   }
 
@@ -672,7 +692,7 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -690,7 +710,8 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Text('Effacer l\'historique'),
-                  content: const Text('Voulez-vous supprimer tout l\'historique des conversations ?'),
+                  content: const Text(
+                      'Voulez-vous supprimer tout l\'historique des conversations ?'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -754,7 +775,8 @@ Pouvez-vous reformuler votre question en lien avec ces thèmes ?''';
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFF5F5F5),
+                color:
+                    isDark ? const Color(0xFF2D2D2D) : const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
                   color: Colors.grey.withOpacity(0.3),
